@@ -19,25 +19,32 @@ class MotorControl:
 
         controller_dictionary = {}
         speed_factors = {}
-        for i in range(0, 9):
+        counter = 0
+        for i in range(0, 20):
             rc = Roboclaw(self.baseStr + str(i), self.rate)
             if rc.Open() == 0:
                 for a in addressList:
                     if rc.GetConfig(a) != (0, 0):
                         controller_dictionary[a] = rc
                         speed_factors[a] = [1, 1, 1]
+                        counter += 1
                         break
+            if counter == 3:
+                break
         return controller_dictionary, speed_factors
 
     def list_controllers(self):
         return self.controller_dictionary.keys()
 
-    def set_control_speed_factors(self, address, factor):
+    def set_control_speed_factor(self, address, factor):
         self.speed_factors[address][0] = factor
 
     def set_motor_speed_factors(self, address, m1_factor, m2_factor):
         self.speed_factors[address][1] = m1_factor
         self.speed_factors[address][2] = m2_factor
+
+
+    # motion
 
     def drive_M1(self, address, speed):
         rc = self.controller_dictionary.get(address)
